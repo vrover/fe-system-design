@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Polling Demo</title>
+</head>
+
+<body>
+    <h1>Long Polling Chat</h1>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type a message" />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function poll() {
+            try {
+                const response = await fetch('/pollMessage');
+                const data = await response.json();
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML += `<p>${data.message}</p>`;
+                poll(); // Poll again
+            } catch (error) {
+                console.error('Polling error:', error);
+                setTimeout(poll, 1000); // Retry after 1 second if there is an error
+            }
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            messageInput.value = '';
+
+            await fetch('/newMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+        }
+
+        // Start polling when the page loads
+        window.onload = () => {
+            poll();
+        };
+
+    </script>
+</body>
+
+</html>

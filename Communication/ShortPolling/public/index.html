@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Short Polling Example</title>
+    <script>
+        function poll() {
+            fetch('/pollMessage')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('message').innerText = data.message;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Poll every 5 seconds
+        setInterval(poll, 5000);
+
+        // Initial poll
+        window.onload = poll;
+    </script>
+</head>
+
+<body>
+    <h1>Short Polling Example</h1>
+    <p id="message">Fetching message...</p>
+</body>
+
+</html>
